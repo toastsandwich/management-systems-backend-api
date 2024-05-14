@@ -19,8 +19,14 @@ func LoadApplication() *Application {
 	return &Application{
 		InfoLog:  log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime),
 		ErrorLog: log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile),
-		Storage:  storage.SQLStore(),
-		Mux:      http.NewServeMux(),
+		Storage: func() *storage.MySQLStore {
+			store, err := storage.NewMySQLStore()
+			if err != nil {
+				panic(err)
+			}
+			return store
+		}(),
+		Mux: http.NewServeMux(),
 	}
 }
 
