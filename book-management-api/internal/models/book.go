@@ -3,10 +3,10 @@ package models
 type Book struct {
 	// thumbnail
 	ID          int    `json:"id"`
-	Title       string `json:"title"`
-	Genre       string `json:"genre"`
+	Cost        int    `json:"cost"`
 	Description string `json:"description"`
+	Genre       string `json:"genre"`
 	ISBN        string `json:"isbn"`
 	PageCount   int    `json:"pageCount"`
-	Cost        int    `json:"cost"`
+	Title       string `json:"title"`
 }
