@@ -31,5 +31,10 @@ func LoadApplication() *Application {
 }
 
 func (app *Application) Routes() {
-
+	app.Mux.HandleFunc("/", app.Home)
+	app.Mux.HandleFunc("/book/create", app.CreateBook)
+	app.Mux.HandleFunc("/book/get", app.GetBookByID)
+	app.Mux.HandleFunc("/book/delete", app.DeleteBook)
+	app.Mux.HandleFunc("/book/all", app.GetAllBooks)
+	app.Mux.HandleFunc("/book/recent", app.RecentAdds)
 }
