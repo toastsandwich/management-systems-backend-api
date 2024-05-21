@@ -43,14 +43,7 @@ func NewMySQLStore() (*MySQLStore, error) {
 }
 
 func (m *MySQLStore) CreateBook(book *models.Book) error {
-	qry := `INSERT INTO books VALUES(title, genre, description, isbn, page_count, cost) (
-		?,
-		?,
-		?,
-		?,
-		?,
-		?
-	)`
+	qry := `INSERT INTO books (title, genre, description, isbn, page_count, cost) VALUES (?, ?, ?, ?, ?, ?)`
 	_, err := m.db.Exec(qry,
 		book.Title,
 		book.Genre,
@@ -110,7 +103,7 @@ func (m *MySQLStore) GetBookByID(id int) (*models.Book, error) {
 }
 
 func (m *MySQLStore) RecentAdds() ([]*models.Book, error) {
-	qry := `SELECT * FROM books ORDER BY id DEC LIMIT 10`
+	qry := `SELECT * FROM books ORDER BY id DESC LIMIT 10`
 	books := []*models.Book{}
 	rows, err := m.db.Query(qry)
 	if err != nil {
