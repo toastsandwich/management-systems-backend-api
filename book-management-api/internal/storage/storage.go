@@ -13,7 +13,6 @@ type Storage interface {
 	DeleteBook(int) error
 	GetAllBooks() ([]*models.Book, error)
 	GetBookByID(int) (*models.Book, error)
-	UpdateBook(*models.Book) error
 	RecentAdds() ([]*models.Book, error)
 }
 
@@ -44,11 +43,35 @@ func NewMySQLStore() (*MySQLStore, error) {
 }
 
 func (m *MySQLStore) CreateBook(book *models.Book) error {
-
+	qry := `INSERT INTO books VALUES(title, genre, description, isbn, page_count, cost) (
+		?,
+		?,
+		?,
+		?,
+		?,
+		?
+	)`
+	_, err := m.db.Exec(qry,
+		book.Title,
+		book.Genre,
+		book.Description,
+		book.ISBN,
+		book.PageCount,
+		book.Cost,
+	)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (m *MySQLStore) DeleteBook(id int) error {
-
+	qry := `DELETE FROM books WHERE id = ?`
+	_, err := m.db.Exec(qry, id)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (m *MySQLStore) GetAllBooks() ([]*models.Book, error) {
@@ -86,10 +109,20 @@ func (m *MySQLStore) GetBookByID(id int) (*models.Book, error) {
 	return book, nil
 }
 
-func (m *MySQLStore) UpdateBook(book *models.Book) error {
-
-}
-
 func (m *MySQLStore) RecentAdds() ([]*models.Book, error) {
-
+	qry := `SELECT * FROM books ORDER BY id DEC LIMIT 10`
+	books := []*models.Book{}
+	rows, err := m.db.Query(qry)
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		book := &models.Book{}
+		err := rows.Scan(&book.ID, &book.Title, &book.Genre, &book.Description, &book.ISBN, &book.PageCount, &book.Cost)
+		if err != nil {
+			return nil, err
+		}
+		books = append(books, book)
+	}
+	return books, nil
 }
